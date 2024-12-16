@@ -1,4 +1,3 @@
-```markdown
 # DocTalk: Чат с Документами
 
 ## Описание
@@ -89,5 +88,3 @@ API-ключ сохраняется в локальном файле `key.env`, 
 - Автор: StaarLing
 - Email: puhov665@gmail.com
 - GitHub: https://github.com/StaarLing
-```
-
