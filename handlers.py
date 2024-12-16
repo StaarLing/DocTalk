@@ -45,7 +45,6 @@ def load_document(documents, current_document, doc_list_frame, indexer, switch_t
     add_document_to_list(
         doc_list_frame=doc_list_frame,
         doc_name=file_name,
-        image_path="assets/file_template.png",  # Замените на путь к изображению для карточек документов
         switch_to_chat=switch_to_chat,  # Передайте вашу функцию переключения на чат
         current_document=current_document,
         chat_box=chat_box,  # Передайте виджет чата, если нужно
@@ -56,8 +55,16 @@ def load_document(documents, current_document, doc_list_frame, indexer, switch_t
     print(f"Документ {file_name} успешно загружен и проиндексирован.")
 
     
-def add_document_to_list(doc_list_frame, doc_name, image_path, switch_to_chat, current_document, chat_box, documents, app):
-    card = ctk.CTkFrame(doc_list_frame, corner_radius=10, fg_color="#242424", border_color="#242424", border_width=3)
+def add_document_to_list(doc_list_frame, doc_name, switch_to_chat, current_document, chat_box, documents, app):
+    # Определяем изображение в зависимости от типа документа
+    if doc_name.lower().endswith(".pdf"):
+        image_path = "assets/pdf_icon.png"  # Путь к иконке PDF
+    elif doc_name.lower().endswith(".docx"):
+        image_path = "assets/word_icon.png"  # Путь к иконке Word
+    else:
+        image_path = "assets/file_template.png"  # Иконка по умолчанию
+
+    card = ctk.CTkFrame(doc_list_frame, corner_radius=10, fg_color="#333333", border_color="#333333", border_width=3)
     card.pack(fill="both", padx=5, pady=5)
 
     img = Image.open(image_path)
@@ -68,7 +75,7 @@ def add_document_to_list(doc_list_frame, doc_name, image_path, switch_to_chat, c
     img_label.image = img
     img_label.pack(side="left", padx=10, pady=10)
 
-    wrapped_name = "\n".join(textwrap.wrap(doc_name, width=23))
+    wrapped_name = "\n".join(textwrap.wrap(doc_name, width=25))
     text_label = ctk.CTkLabel(card, text=wrapped_name, font=("Arial", 14), wraplength=250, justify="left")
     text_label.pack(side="left", padx=10, pady=10)
 
@@ -83,16 +90,15 @@ def add_document_to_list(doc_list_frame, doc_name, image_path, switch_to_chat, c
     ))
 
 
+
 def on_select(doc_name, current_document, chat_box, documents, doc_list_frame, switch_to_chat, card, app):
     if app.selected_card is not None:
-        app.selected_card.configure(border_color="#242424", border_width=3)
+        app.selected_card.configure(border_color="#333333", border_width=3)
 
     app.selected_card = card
     app.selected_card.configure(border_color="#1f6aa5", border_width=3)
 
     switch_to_chat(doc_name, current_document, chat_box, documents, None, doc_list_frame)
-
-
 
 def extract_text_from_pdf(file_path):
     """Извлечение текста из PDF с помощью PyPDF2"""

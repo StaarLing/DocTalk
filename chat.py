@@ -1,7 +1,11 @@
 from groq import Groq
+import os
 from utils import add_message_to_chat_box
+from dotenv import load_dotenv
 
-client = Groq(api_key="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")
+load_dotenv("key.env")
+api_key = os.getenv("GROQ_API_KEY")
+client = Groq(api_key=api_key)
 
 def generate_answer_with_llm(query, context):
     # Формируем сообщение для модели
@@ -16,7 +20,7 @@ def generate_answer_with_llm(query, context):
             }
         ],
         model="llama-3.1-70b-versatile",  # Указываем нужную модель
-        max_tokens=350
+        max_tokens=3500
     )
 
     print(query)
@@ -25,7 +29,6 @@ def generate_answer_with_llm(query, context):
     return chat_completion.choices[0].message.content
 
 
-# Функция для обработки сообщений
 def send_message(input_box, chat_box, documents, current_document, indexer):
     question = input_box.get().strip()
     if not question:
@@ -44,10 +47,7 @@ def send_message(input_box, chat_box, documents, current_document, indexer):
     results = indexer.search(question, doc_name=doc_name, top_k=3)
     
     if results:
-        # Извлекаем контекст — релевантные фрагменты текста
         context = "\n".join([block for _, block, _ in results])
-        
-        # Генерация ответа с использованием LLM
         response = generate_answer_with_llm(question, context)
     else:
         response = "Бот: Не удалось найти релевантный текст."
@@ -55,8 +55,13 @@ def send_message(input_box, chat_box, documents, current_document, indexer):
     # Добавляем ответ бота
     add_message_to_chat_box(chat_box, response, "bot")
 
+    # Сохраняем чат в историю
+    documents[doc_name]["chat"].append(question)
+    documents[doc_name]["chat"].append(response)
+
     # Очищаем поле ввода
     input_box.delete(0, "end")
+
 
 
 def update_scroll_region(canvas):

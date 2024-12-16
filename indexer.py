@@ -31,7 +31,7 @@ class Indexer:
             # Сохраняем индекс в словарь по имени документа
             self.document_indices[doc_name] = doc_index
 
-    def search(self, query, doc_name=None, top_k=3):
+    def search(self, query, doc_name=None, top_k=5):
         # Создаем эмбеддинг для запроса
         query_embedding = self.model.encode([query]).astype('float32')
 
